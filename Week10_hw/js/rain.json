@@ -1,0 +1,57 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 600,
+    "height": 300,
+    "data": {
+        "url": "data/weatherAUS.csv",
+        "format": {
+            "type": "csv"
+        }
+    },
+    "transform": [
+        {
+            "aggregate": [
+                {
+                    "op": "sum",
+                    "field": "Rainfall",
+                    "as": "TotalRainfall"
+                }
+            ],
+            "groupby": [
+                "Location"
+            ]
+        }
+    ],
+    "mark": "bar",
+    "encoding": {
+        "x": {
+            "field": "Location",
+            "type": "nominal",
+            "title": "Location"
+        },
+        "y": {
+            "field": "TotalRainfall", 
+            "type": "quantitative",
+            "title": "Total Rainfall (mm)"
+        },
+        "tooltip": [
+            {
+                "field": "Location",
+                "type": "nominal"
+            },
+            
+            {
+                "field": "TotalRainfall",
+                "type": "quantitative",
+                "format": ".1f",
+                "title": "Total amount of rainfall (mm)"
+            }
+        ]
+    },
+    "config": {
+        "axisX": {
+            "labelAngle": 0
+        }
+    },
+    "title": "Total Rainfall by Location"
+}

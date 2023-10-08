@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 10 - Homework</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+        crossorigin="anonymous">
+</head>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    #map, #map2, #rain {
+        height: fit-content;
+        width: fit-content; 
+        border: 1px solid #ccc; 
+        padding: 2%;
+    }
+
+    #container1, #container2 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+</head>
+<body>
+    <div id="container1">
+        <div id="map"></div>
+        <div id="map2"></div>
+    </div>
+    <div id="container2">
+        <div id="rain"></div>
+    </div>
+
+    <script type="text/javascript">
+        var spec1 =  "js/map.json";
+
+        var spec2 =  "js/map2.json";
+        
+        var spec3 =  "js/rain.json";
+
+        vegaEmbed('#map', spec1).then(function(result) {
+            // Access the Vega view instance for the first map as result.view
+        }).catch(console.error);
+
+        vegaEmbed('#map2', spec2).then(function(result) {
+            // Access the Vega view instance for the second map as result.view
+        }).catch(console.error);
+
+         vegaEmbed('#rain', spec3).then(function(result) {
+            // Access the Vega view instance for the second map as result.view
+        }).catch(console.error);
+    </script>
+</body>
+</html>

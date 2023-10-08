@@ -1,0 +1,141 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 400,
+    "height": 300,
+    "projection": {
+        "type": "mercator",
+        "scale": 450,
+        "center": [
+            133.7751,
+            -28.2744
+        ]
+    },
+    "params": [
+        {
+            "name": "Date_selection",
+            "bind": {
+                "input": "date",
+                "name": "Date: "
+            }
+        }
+    ],
+    "title": "Maximum Temperature by Location (2007 - 2027)",
+    "layer": [
+        {
+            "data": {
+                "url": "https://vega.github.io/vega-datasets/data/world-110m.json",
+                "format": {
+                    "type": "topojson",
+                    "feature": "countries"
+                }
+            },
+            "mark": {
+                "type": "geoshape",
+                "fill": "lightgray",
+                "stroke": "white",
+                "strokeWidth": 0.5
+            }
+        },
+        {
+            "data": {
+                "url": "data/weatherAUS.csv",
+                "format": {
+                    "type": "csv"
+                }
+            },
+            "transform": [
+                {
+                    "lookup": "Location",
+                    "from": {
+                        "data": {
+                            "url": "data/weatherAUS-geo-coordinates.csv"
+                        },
+                        "key": "Location",
+                        "fields": [
+                            "latitude",
+                            "longitude"
+                        ]
+                    }
+                },
+                {
+                    "filter": {
+                        "field": "Date",
+                        "range": [
+                            {
+                                "year": 2007,
+                                "month": 11,
+                                "date": 1
+                            },
+                            {
+                                "year": 2017,
+                                "month": 6,
+                                "date": 25
+                            }
+                        ]
+                    }
+                },
+                
+                {
+                    "joinaggregate": [
+                        {
+                            "op": "max",
+                            "field": "MaxTemp",
+                            "as": "MaxTemp"
+                        }
+                    ],
+                    "groupby": [
+                        "Location"
+                    ]
+                }
+            ],
+            "mark": {
+                "type": "circle",
+                "stroke": "darkred",
+                "strokeWidth": 1
+            },
+            "encoding": {
+                "longitude": {
+                    "field": "longitude",
+                    "type": "quantitative"
+                },
+                "latitude": {
+                    "field": "latitude",
+                    "type": "quantitative"
+                },
+                
+                "color": {
+                    "field": "MaxTemp",
+                    "type": "quantitative",
+                    "scale": {
+                        "type": "linear",
+                        "domain": [
+                            5,
+                            50
+                        ],
+                        "scheme": "reds"
+                    }
+                },
+                "tooltip": [
+                    {
+                        "field": "Location",
+                        "type": "nominal"
+                    },
+                    {
+                        "field": "Date",
+                        "type": "temporal",
+                        "format": {
+                            "utc": "%Y-%m-%d"
+                        },
+                        "title": "Date"
+                    },
+                    {
+                        "field": "MaxTemp",
+                        "type": "quantitative",
+                        "format": ".1f",
+                        "title": "Maximum Temperature (°C)"
+                    }
+                ]
+            }
+        }
+    ]
+}
