@@ -1,0 +1,140 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 600,
+    "height": 400,
+    "projection": {
+        "type": "mercator",
+        "scale": 600,
+        "center": [
+            133.7751,
+            -28.2744
+        ]
+    },
+    "params": [
+        {
+            "name": "sliderYear",
+            "value": null,
+            "bind": {
+                "input": "range",
+                "min": 2007,
+                "max": 2017,
+                "step": 1,
+                "name": "Year: "
+            }
+        },
+        {
+            "name": "resetFilter",
+            "value": "Select",
+            "bind": {
+                "input": "button",
+                "name": "Click here to reset filter: "
+            }
+        }
+    ],
+    "title": "Minimum Temperature by Location",
+    "layer": [
+        {
+            "data": {
+                "url": "data/au-states-topo.json",
+                "format": {
+                    "type": "topojson",
+                    "feature": "austates"
+                }
+            },
+            "mark": {
+                "type": "geoshape",
+                "fill": "lightgray",
+                "stroke": "white",
+                "strokeWidth": 0.5
+            }
+        },
+        {
+            "data": {
+                "url": "data/weatherAUS.csv",
+                "format": {
+                    "type": "csv"
+                }
+            },
+            "transform": [
+                {
+                    "lookup": "Location",
+                    "from": {
+                        "data": {
+                            "url": "data/weatherAUS-geo-coordinates.csv"
+                        },
+                        "key": "Location",
+                        "fields": [
+                            "latitude",
+                            "longitude"
+                        ]
+                    }
+                },
+                {
+                    "filter": "sliderYear == null || year(datum.Date) == sliderYear"
+                },
+                {
+                    "calculate": "year(datum.Date)",
+                    "as": "Year"
+                },
+                {
+                    "calculate": "if(datum.MinTemp === 'NA', 0, datum.MinTemp)",
+                    "as": "MinTemp"
+                },
+                {
+                    "joinaggregate": [
+                        {
+                            "op": "average",
+                            "field": "MinTemp",
+                            "as": "AverageMinTemp"
+                        }
+                    ],
+                    "groupby": [
+                        "Location",
+                        "Year"
+                    ]
+                }
+            ],
+            "mark": {
+                "type": "circle",
+                "stroke": "darkblue", 
+                "strokeWidth": 1
+            },
+            "encoding": {
+                "longitude": {
+                    "field": "longitude",
+                    "type": "quantitative"
+                },
+                "latitude": {
+                    "field": "latitude",
+                    "type": "quantitative"
+                },
+                
+                "color": {
+                    "field": "AverageMinTemp",
+                    "type": "quantitative",
+                    "title": "Temperature",
+                    "scale": {
+                        "type": "linear",
+                        "scheme": "blues"
+                    }
+                },
+                "tooltip": [
+                    {
+                        "field": "Location",
+                        "type": "nominal"
+                    },
+                    {
+                        "field": "Year",
+                        "type": "ordinal"
+                    },
+                    {
+                        "field": "AverageMinTemp",
+                        "type": "quantitative",
+                        "format": ".1f",
+                        "title": "Average Minimum Temperature (°C)"
+                    }
+                ]
+            }
+        }
+    ]
+}
