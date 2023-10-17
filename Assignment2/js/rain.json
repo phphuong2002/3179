@@ -1,0 +1,129 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 550,
+    "height": 300,
+    "data": {
+        "url": "data/weatherAUS.csv",
+        "format": {
+            "type": "csv"
+        }
+    },
+    "params": [
+        {
+            "name": "sliderYear",
+            "value": 2016,
+            "bind": {
+                "input": "range",
+                "min": 2008,
+                "max": 2016,
+                "step": 1,
+                "name": "Year: "
+            }
+        }
+    ],
+    "transform": [
+        {
+            "calculate": "year(datum.Date)",
+            "as": "Year"
+        },
+        {
+            "calculate": "if(isNaN(datum.Rainfall) || datum.Rainfall === 'NA', 0, datum.Rainfall)",
+            "as": "TotalRainfall"
+        },
+        {
+            "filter": "year(datum.Date) == sliderYear"
+        },
+        {
+            "aggregate": [
+                {
+                    "op": "sum",
+                    "field": "TotalRainfall",
+                    "as": "TotalRainfall"
+                }
+            ],
+            "groupby": [
+                "Location", "Year"
+            ]
+        },
+        {
+            "filter": "datum.Location == 'Darwin' || datum.Location == 'Melbourne' || datum.Location == 'Sydney' || datum.Location == 'Canberra' || datum.Location == 'Adelaide' || datum.Location == 'Brisbane' || datum.Location == 'Hobart' || datum.Location == 'Perth'"
+        }
+    ],
+    "layer": [
+        {
+            "mark": "bar",
+            "encoding": {
+                "x": {
+                    "field": "Location",
+                    "type": "nominal",
+                    "title": "Location"
+                },
+                "y": {
+                    "field": "TotalRainfall",
+                    "type": "quantitative",
+                    "title": "Total Rainfall (mm)",
+                    "scale": {
+                        "domain": [
+                            0,
+                            2500
+                        ] 
+                    }
+                },
+                "color": {
+                    "field": "TotalRainfall",
+                    "type": "quantitative",
+                    "title": "Rainfall (mm)",
+                    "scale": {
+                        "type": "linear",
+                        "scheme": "tealblues"
+                    }
+                },
+                "tooltip": [
+                    {
+                        "field": "Location",
+                        "type": "nominal"
+                    },
+                    {
+                        "field": "Year",
+                        "type": "ordinal"
+                    },
+                    {
+                        "field": "TotalRainfall",
+                        "type": "quantitative",
+                        "format": ".1f",
+                        "title": "Total rainfall (mm)"
+                    }
+                ]
+            }
+        },
+        {
+            "mark": "rule",
+            "encoding": {
+                "y": {
+                    "aggregate": "mean",
+                    "field": "TotalRainfall",
+                    "type": "quantitative"
+                },
+                "color": {
+                    "value": "red"
+                },
+                "size": {
+                    "value": 2
+                },
+                "tooltip": [
+                    {
+                        "field": "AverageRainfall",
+                        "type": "quantitative",
+                        "format": ".1f",
+                        "title": "Average Total Rainfall (mm)"
+                    }
+                ]
+            }
+        }
+    ],
+    "config": {
+        "axisX": {
+            "labelAngle": 45
+        }
+    }
+}

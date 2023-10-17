@@ -1,0 +1,190 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 600,
+    "height": 500,
+    "projection": {
+        "type": "mercator",
+        "scale": 700,
+        "center": [
+            133.7751,
+            -28.2744
+        ]
+    },
+    "params": [
+        {
+            "name": "sliderYear",
+            "value": 2016,
+            "bind": {
+                "input": "range",
+                "min": 2008,
+                "max": 2016,
+                "step": 1,
+                "name": "Year: "
+            }
+        }
+    ],
+    "title": "Average Minimum Temperature by Location per year",
+    "layer": [
+        {
+            "data": {
+                "url": "data/au-states-topo.json",
+                "format": {
+                    "type": "topojson",
+                    "feature": "austates"
+                }
+            },
+            "mark": {
+                "type": "geoshape",
+                "fill": "lightgray",
+                "stroke": "white",
+                "strokeWidth": 0.5
+            }
+        },
+        {
+            "data": {
+                "url": "data/weatherAUS.csv",
+                "format": {
+                    "type": "csv"
+                }
+            },
+            "transform": [
+                {
+                    "lookup": "Location",
+                    "from": {
+                        "data": {
+                            "url": "data/weatherAUS-geo-coordinates.csv"
+                        },
+                        "key": "Location",
+                        "fields": [
+                            "latitude",
+                            "longitude"
+                        ]
+                    }
+                },
+                {
+                    "filter": "sliderYear == null || year(datum.Date) == sliderYear"
+                },
+                {
+                    "filter": "datum['Location'] == 'Darwin' || datum['Location'] == 'Perth' || datum['Location'] == 'Brisbane' || datum['Location'] == 'Adelaide' || datum['Location'] == 'Sydney' || datum['Location'] == 'Melbourne' || datum['Location'] == 'Hobart' || datum['Location'] == 'Canberra'"
+                },
+                {
+                    "calculate": "year(datum.Date)",
+                    "as": "Year"
+                },
+                {
+                    "calculate": "if(datum.MinTemp === 'NA', 0, datum.MinTemp)",
+                    "as": "MinTemp"
+                },
+                {
+                    "joinaggregate": [
+                        {
+                            "op": "average",
+                            "field": "MinTemp",
+                            "as": "AverageMinTemp"
+                        }
+                    ],
+                    "groupby": [
+                        "Location",
+                        "Year"
+                    ]
+                }
+            ],
+            "layer": [
+                {
+                    "mark": {
+                        "type": "circle"
+                    },
+                    "encoding": {
+                        "longitude": {
+                            "field": "longitude",
+                            "type": "quantitative"
+                        },
+                        "latitude": {
+                            "field": "latitude",
+                            "type": "quantitative"
+                        },
+                        "color": {
+                            "field": "AverageMinTemp",
+                            "type": "quantitative",
+                            "title": "Temperature (°C)",
+                            "scale": {
+                                "type": "linear",
+                                "scheme": "blues"
+                            }
+                        },
+                        "size": {
+                            "value": 200
+                        },
+                        "tooltip": [
+                            {
+                                "field": "Location",
+                                "type": "nominal"
+                            },
+                            {
+                                "field": "Year",
+                                "type": "ordinal"
+                            },
+                            {
+                                "field": "AverageMinTemp",
+                                "type": "quantitative",
+                                "format": ".1f",
+                                "title": "Average Minimum Temperature (°C)"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "mark": {
+                        "type": "text",
+                        "align": "right",
+                        "baseline": "middle",
+                        "dy": -13,
+                        "dx": -5,
+                        "fontSize": 11,
+                        "fontStyle": "italic"
+                    },
+                    "encoding": {
+                        "longitude": {
+                            "field": "longitude",
+                            "type": "quantitative"
+                        },
+                        "latitude": {
+                            "field": "latitude",
+                            "type": "quantitative"
+                        },
+                        "text": {
+                            "field": "Location",
+                            "type": "nominal"
+                        },
+                        "color": {
+                            "value": "black"
+                        },
+                        "opacity": {
+                            "condition": {
+                                "test": "datum['Location'] == 'Darwin' || datum['Location'] == 'Perth' || datum['Location'] == 'Brisbane' || datum['Location'] == 'Adelaide' || datum['Location'] == 'Sydney' || datum['Location'] == 'Melbourne' || datum['Location'] == 'Hobart' || datum['Location'] == 'Canberra'",
+                                "value": 1
+                            },
+                            "value": 0
+                        },
+                        "tooltip": [
+                            {
+                                "field": "Location",
+                                "type": "nominal"
+                            },
+                            {
+                                "field": "Year",
+                                "type": "ordinal"
+                            },
+                            {
+                                "field": "AverageMinTemp",
+                                "type": "quantitative",
+                                "format": ".1f",
+                                "title": "Average Minimum Temperature (°C)"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

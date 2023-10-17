@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization - A2</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+        crossorigin="anonymous">
+    
+    <!-- Import pure.css -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
+    <!-- CSS file -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css" media="all">
+</head>
+<style>
+    #section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 70px;
+    }
+</style>
+</head>
+<body>
+    
+    <div class="page shadow">
+        <div style="padding: 0 70px;">
+            <div class="pure-u-1-1 text-center">
+                <h1 style="font-size: 50px;">Exploring Australian Cities Weather Diversity</h1>
+                <p style="font-size: 24px"><strong>Australia</strong> is a vast continent known for 
+                    its <strong>diverse climate</strong> due to its unique geographic location. 
+                    From the tropical regions of northern cities like <strong>Darwin</strong> to 
+                    the temperate climate in <strong>Melbourne</strong> and the arid conditions in <strong>Perth</strong>, 
+                    this visualization delves into the varied weather patterns experienced 
+                    across <strong>eight major Australian cities</strong> between 2008 and 2016.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page shadow">
+        <div id="section">
+            <h3>Heatwaves Unveiled</h3>
+            <hr style="border: 1px solid #000; width: 20%; margin-bottom: 20px;"></hr>
+            <div id="map" class="mb-3"></div>
+            <div class="container-fluid row">
+                <p class="col-md-6">Over the study period, we observed a general increase in average maximum temperatures across all eight locations. This trend aligns with global warming patterns, indicating that Australia, too, is experiencing the effects of climate change. Despite the overall increase, each location exhibited unique</p>
+                <p class="col-md-6"> temperature patterns. For instance, Darwin, in the Northern Territory, experienced consistently high average maximum temperatures throughout the years, while Hobart, in Tasmania, maintained relatively lower temperatures.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page shadow">
+        <div id="section">
+            <h3>Chasing the Chill</h3>   
+            <hr style="border: 1px solid #000; width: 20%; margin-bottom: 20px;"></hr>
+            <div id="map2" class="mb-3"></div>
+            <div class="container-fluid row">
+                <p class="col-md-6">Similar to the maximum temperature map, there is a clear distinction between the northern and southern regions of Australia. The northern cities, such as Darwin and Brisbane, consistently maintain higher average minimum temperatures throughout the year due to their tropical climates. Meanwhile, the southern cities, like Melbourne and</p>
+                <p class="col-md-6">Hobart, experience milder temperatures, occasionally dipping into cooler ranges during the winter months. Darwin, being the northernmost city, consistently stands out as one of the warmest locations year-round. Its tropical climate results in a distinct lack of cold seasons, making it a hotspot for those who prefer warmer nights.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page shadow">
+        <div id="section">
+            <h3>Daily Temperature Differences</h3>   
+            <hr style="border: 1px solid #000; width: 20%; margin-bottom: 20px;"></hr>
+            <div id="line" class="mb-3"></div>
+            <div class="container-fluid row">
+                <p class="col-md-6">The line chart offers a comprehensive visualization of the daily temperature differences throughout the year in eight prominent Australian cities, spanning the months from January to December. As depicted in the chart, most of the cities experience relatively high temperature differences during the day over the summer months except Darwin, Brisbane, and Sydney.</p>
+                <p class="col-md-6">A standout feature of the chart is the city of Canberra, which consistently maintains the highest daily temperature differences throughout the year compared to the other cities. This indicates that Canberra experiences more significant temperature fluctuations on a daily basis, likely due to its inland location and greater continental climate influence.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page shadow">
+        <div id="section">
+            <h3>Wettest Cities</h1>
+            <hr style="border: 1px solid #000; width: 20%; margin-bottom: 20px;"></hr>
+            <div id="rain" class="mb-3"></div>
+            <div class="container-fluid row">
+                <p class="col-md-6">This bar graph illustrates the annual rainfall levels in eight major Australian cities, showcasing significant disparities in precipitation patterns. Darwin consistently leads the pack with the highest annual rainfall, earning its reputation as one of the nation's wettest cities. </p>
+                <p class="col-md-6">Additionally, Sydney and Brisbane, also exhibit relatively high annual rainfall levels, placing them among the top three in terms of precipitation. This contrast highlights the fascinating climatic diversity within Australia, from tropical downpours in Darwin to the substantial rainfall in Sydney and Brisbane.</p>
+            </div>
+        </div>
+        <footer class="mt-4">@ Created by Ha Phuong Pham</footer>
+
+    </div>
+
+    <script type="text/javascript">
+        var spec1 =  "js/map.json";
+
+        var spec2 =  "js/map2.json";
+        
+        var spec3 =  "js/line.json";
+
+        var spec4 =  "js/rain.json";
+
+        vegaEmbed('#map', spec1).then(function(result) {
+            // Access the Vega view instance for the first map as result.view
+        }).catch(console.error);
+
+        vegaEmbed('#map2', spec2).then(function(result) {
+            // Access the Vega view instance for the second map as result.view
+        }).catch(console.error);
+
+        vegaEmbed('#line', spec3).then(function(result) {
+            // Access the Vega view instance for the second map as result.view
+        }).catch(console.error);
+
+        vegaEmbed('#rain', spec4).then(function(result) {
+            // Access the Vega view instance for the second map as result.view
+        }).catch(console.error);
+    </script>
+
+</body>
+</html>

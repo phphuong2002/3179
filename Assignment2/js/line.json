@@ -1,0 +1,159 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 600,
+  "height": 400,
+  "data": {
+    "url": "data/weatherAUS.csv",
+    "format": {
+      "type": "csv"
+    }
+  },
+  "title": "Average Temperature Difference by Location throughout the year",
+  "transform": [
+    {
+      "calculate": "datum.MaxTemp - datum.MinTemp",
+      "as": "TempDiff"
+    },
+    {
+      "calculate": "month(datum.Date)",
+      "as": "Month"
+    },
+    {
+      "filter": {
+        "oneOf": [
+          "Darwin",
+          "Perth",
+          "Brisbane",
+          "Adelaide",
+          "Sydney",
+          "Melbourne",
+          "Hobart",
+          "Canberra"
+        ],
+        "field": "Location"
+      }
+    },
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "TempDiff",
+          "as": "MeanTempDiff"
+        }
+      ],
+      "groupby": [
+        "Location",
+        "Month"
+      ]
+    },
+    {
+      "window": [
+        {
+          "op": "argmax",
+          "field": "Month",
+          "as": "last_month"
+        }
+      ],
+      "groupby": [
+        "Location"
+      ]
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "point": true
+      },
+      "encoding": {
+        "x": {
+          "field": "Month",
+          "type": "quantitative",
+          "title": "Month",
+          "axis": {
+            "labelExpr": "datum.value === 0 ? 'Jan' : datum.value === 1 ? 'Feb' : datum.value === 2 ? 'Mar' : datum.value === 3 ? 'Apr' : datum.value === 4 ? 'May' : datum.value === 5 ? 'Jun' : datum.value === 6 ? 'Jul' : datum.value === 7 ? 'Aug' : datum.value === 8 ? 'Sep' : datum.value === 9 ? 'Oct' : datum.value === 10 ? 'Nov' : 'Dec'",
+            "grid": true
+          }
+        },
+        "y": {
+          "field": "MeanTempDiff",
+          "type": "quantitative",
+          "title": "Average Temperature Difference"
+        },
+        "detail": {
+          "field": "Location"
+        },
+        "color": {
+          "field": "Location",
+          "type": "nominal",
+          "scale": {
+            "scheme": "inferno"
+            }
+        },
+        "opacity": {
+          "condition": {
+            "param": "hover",
+            "value": 1
+          },
+          "value": 0.2
+        },
+        "tooltip": [
+          {
+            "field": "Location",
+            "type": "nominal",
+            "title": "Location: "
+          },
+          {
+            "field": "Month",
+            "type": "quantitative",
+            "title": "Month"
+          },
+          {
+            "field": "MeanTempDiff",
+            "type": "quantitative",
+            "format": ".1f",
+            "title": "Average Temperature Difference (°C)"
+          }
+        ]
+      },
+      "selection": {
+        "hover": {
+          "type": "single",
+          "on": "mouseover",
+          "empty": "none"
+        }
+      }
+    },
+    {
+        "mark": {
+            "type": "text",
+            "baseline": "top",
+            "align": "left",
+            "dx": 5
+        },
+        "encoding": {
+            "x": {
+                "field": "last_month",
+                "type": "quantitative"
+            },
+            "y": {
+                "field": "MeanTempDiff",
+                "type": "quantitative"
+            },
+            "text": {
+                "field": "Location",
+                "type": "nominal"
+            }
+        }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": "transparent"
+    },
+    "axisX": {
+      "labelAngle": 0
+    }
+  }
+}
